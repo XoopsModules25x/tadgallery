@@ -1,6 +1,8 @@
 <?php
-include_once "header.php";
-include_once "class/tadgallery.php";
+
+use XoopsModules\Tadtools\Utility;
+
+require_once __DIR__ . '/header.php';
 
 if (empty($upload_powers) or !$xoopsUser) {
     exit;
@@ -10,21 +12,21 @@ if (empty($upload_powers) or !$xoopsUser) {
 function edit_photo($sn)
 {
     global $upload_powers;
-    $photo = tadgallery::get_tad_gallery($sn);
+    $photo = Tadgallery::get_tad_gallery($sn);
 
     $tag_select = tag_select($photo['tag']);
 
-    $path           = get_tadgallery_cate_path($photo['csn']);
-    $patharr        = array_keys($path);
-    $make_option_js = "";
+    $path = get_tadgallery_cate_path($photo['csn']);
+    $patharr = array_keys($path);
+    $make_option_js = '';
     foreach ($patharr as $k => $of_csn) {
         $j = $k + 1;
         $make_option_js .= "make_option('csn_menu','{$k}','{$of_csn}','{$patharr[$j]}');\n";
     }
 
     $form_col = "
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'>" . _MD_TADGAL_CSN . "</label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_CSN . "</label>
         <div class='col-sm-10'>
           <select name='csn_menu[0]' id='csn_menu0' class='csn_menu'><option value=''></option></select>
           <select name='csn_menu[1]' id='csn_menu1' class='csn_menu' style='display: none;'></select>
@@ -37,40 +39,40 @@ function edit_photo($sn)
         </div>
       </div>
 
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'>" . _MD_TADGAL_TITLE . "</label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_TITLE . "</label>
         <div class='col-sm-10'>
           <input class='form-control' type='text' name='title' value='{$photo['title']}' id='newTitle' placeholder='" . _MD_TADGAL_TITLE . "'>
         </div>
       </div>
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'>" . _MD_TADGAL_IS360 . "</label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_IS360 . "</label>
         <div class='col-sm-10 controls'>
           <label class='radio-inline'>
-            <input type='radio' name='is360' value='1' " . chk($photo['is360'], '1', 0) . ">" . _YES . "
+            <input type='radio' name='is360' value='1' " . Utility::chk($photo['is360'], '1', 0) . '>' . _YES . "
           </label>
           <label class='radio-inline'>
-            <input type='radio' name='is360' value='0' " . chk($photo['is360'], '0', 1) . ">" . _NO . "
+            <input type='radio' name='is360' value='0' " . Utility::chk($photo['is360'], '0', 1) . '>' . _NO . "
           </label>
         </div>
       </div>
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'>" . _MD_TADGAL_DESCRIPTION . "</label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_DESCRIPTION . "</label>
         <div class='col-sm-10'>
           <textarea class='form-control' name='description' id='newDescription'>{$photo['description']}</textarea>
         </div>
       </div>
 
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'>" . _MD_TADGAL_TAG . "</label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_TAG . "</label>
         <div class='col-sm-10'>
           <input type='text' class='form-control' name='new_tag' id='new_tag' placeholder='" . _MD_TADGAL_TAG_TXT . "'>
           {$tag_select}
         </div>
       </div>
 
-      <div class='form-group'>
-        <label class='col-sm-2 control-label'></label>
+      <div class='form-group row'>
+        <label class='col-sm-2 control-label col-form-label text-sm-right'></label>
         <div class='col-sm-10'>
           <label class='checkbox-inline'>
             <input type='checkbox' name='cover' value='small/{$photo['dir']}/{$photo['sn']}_s_{$photo['filename']}'>
@@ -79,10 +81,10 @@ function edit_photo($sn)
 
           <input type='hidden' name='sn' value='{$photo['sn']}'>
           <input type='hidden' name='op' value='update_tad_gallery'>
-          <button type='submit' class='btn btn-primary' id='sbtn'>" . _TAD_SAVE . "</button>
+          <button type='submit' class='btn btn-primary' id='sbtn'>" . _TAD_SAVE . '</button>
         </div>
       </div>
-      ";
+      ';
 
     $form = "
     <script>
@@ -137,7 +139,7 @@ function edit_photo($sn)
       }
     </script>
 
-    <form method='post' id='myForm' style='width:800px;' class='form-horizontal' role='form'>
+    <form method='post' id='myForm' class='form-horizontal' role='form'>
       $form_col
     </form>
     ";
@@ -149,40 +151,40 @@ function edit_photo($sn)
 function edit_album($csn)
 {
     global $upload_powers;
-    include_once XOOPS_ROOT_PATH . "/class/xoopsformloader.php";
+    require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
-    $path           = get_tadgallery_cate_path($csn, false);
-    $patharr        = array_keys($path);
-    $make_option_js = "";
+    $path = get_tadgallery_cate_path($csn, false);
+    $patharr = array_keys($path);
+    $make_option_js = '';
     foreach ($patharr as $k => $of_csn) {
         $j = $k + 1;
         $make_option_js .= "make_option('of_csn_menu','{$k}','{$of_csn}','{$patharr[$j]}');\n";
     }
 
-    $album = tadgallery::get_tad_gallery_cate($csn);
+    $album = Tadgallery::get_tad_gallery_cate($csn);
 
     //可見群組
-    $SelectGroup_name = new XoopsFormSelectGroup("", "enable_group", false, $album['enable_group'], 3, true);
-    $SelectGroup_name->addOption("", _MD_TADGAL_ALL_OK, false);
-    $SelectGroup_name->setExtra("class='col-sm-12'");
+    $SelectGroup_name = new \XoopsFormSelectGroup('', 'enable_group', false, $album['enable_group'], 3, true);
+    $SelectGroup_name->addOption('', _MD_TADGAL_ALL_OK, false);
+    $SelectGroup_name->setExtra("class='form-control'");
     $enable_group = $SelectGroup_name->render();
 
     //可上傳群組
-    $SelectGroup_name = new XoopsFormSelectGroup("", "enable_upload_group", false, $album['enable_upload_group'], 3, true);
-    $SelectGroup_name->setExtra("class='col-sm-12'");
+    $SelectGroup_name = new \XoopsFormSelectGroup('', 'enable_upload_group', false, $album['enable_upload_group'], 3, true);
+    $SelectGroup_name->setExtra("class='form-control'");
     $enable_upload_group = $SelectGroup_name->render();
 
     $form_col = "
-        <div class='form-group'>
-          <label class='col-sm-2 control-label'>" . _MD_TADGAL_ALBUM_TITLE . "</label>
+        <div class='form-group row'>
+          <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_ALBUM_TITLE . "</label>
           <div class='col-sm-10'>
             <input class='form-control' type='text' name='title' value='{$album['title']}' id='newTitle' placeholder='" . _MD_TADGAL_TITLE . "'>
           </div>
         </div>
 
 
-        <div class='form-group'>
-          <label class='col-sm-2 control-label'>" . _MD_TADGAL_OF_CSN . "</label>
+        <div class='form-group row'>
+          <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_OF_CSN . "</label>
           <div class='col-sm-10'>
             <select name='of_csn_menu[0]' id='of_csn_menu0' class='of_csn_menu'><option value=''></option></select>
             <select name='of_csn_menu[1]' id='of_csn_menu1' class='of_csn_menu' style='display: none;'></select>
@@ -195,8 +197,8 @@ function edit_album($csn)
         </div>
 
 
-        <div class='form-group'>
-          <label class='col-sm-2 control-label'>" . _MD_TADGAL_CATE_POWER_SETUP . "</label>
+        <div class='form-group row'>
+          <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_CATE_POWER_SETUP . "</label>
           <div class='col-sm-5'>
             <label>" . _MD_TADGAL_ENABLE_GROUP . "</label>
             $enable_group
@@ -208,20 +210,20 @@ function edit_album($csn)
         </div>
 
 
-        <div class='form-group'>
-          <label class='col-sm-2 control-label'>" . _MD_TADGAL_PASSWD . "</label>
+        <div class='form-group row'>
+          <label class='col-sm-2 control-label col-form-label text-sm-right'>" . _MD_TADGAL_PASSWD . "</label>
           <div class='col-sm-4'>
             <input type='text' name='passwd' class='form-control' value='{$album['passwd']}' placeholder='" . _MD_TADGAL_PASSWD_DESC . "'>
           </div>
 
-          <label class='col-sm-2 control-label'></label>
+          <label class='col-sm-2 control-label col-form-label text-sm-right'></label>
           <div class='col-sm-4'>
             <input type='hidden' name='csn' value='{$album['csn']}'>
             <input type='hidden' name='op' value='update_tad_gallery_cate'>
-            <button type='submit' class='btn btn-primary' id='sbtn'>" . _TAD_SAVE . "</button>
+            <button type='submit' class='btn btn-primary' id='sbtn'>" . _TAD_SAVE . '</button>
           </div>
         </div>
-        ";
+        ';
 
     $form = "
       <script>
@@ -283,62 +285,54 @@ function save_order($item_photo = '', $item_album = '')
 {
     $sort = 1;
     foreach ($item_photo as $sn) {
-        $sql = "update " . $xoopsDB->prefix("tad_gallery") . " set `photo_sort`='{$sort}' where `sn`='{$sn}'";
-        $xoopsDB->queryF($sql) or die(_TADGAL_SORT_COMPLETED . " (" . date("Y-m-d H:i:s") . ")");
+        $sql = 'update ' . $xoopsDB->prefix('tad_gallery') . " set `photo_sort`='{$sort}' where `sn`='{$sn}'";
+        $xoopsDB->queryF($sql) or die(_TADGAL_SORT_COMPLETED . ' (' . date('Y-m-d H:i:s') . ')');
         $sort++;
     }
 
     $sort = 1;
     foreach ($item_album as $csn) {
-        $sql = "update " . $xoopsDB->prefix("tad_gallery_cate") . " set `sort`='{$sort}' where `csn`='{$csn}'";
-        $xoopsDB->queryF($sql) or die(_TADGAL_SORT_COMPLETED . " (" . date("Y-m-d H:i:s") . ")");
+        $sql = 'update ' . $xoopsDB->prefix('tad_gallery_cate') . " set `sort`='{$sort}' where `csn`='{$csn}'";
+        $xoopsDB->queryF($sql) or die(_TADGAL_SORT_COMPLETED . ' (' . date('Y-m-d H:i:s') . ')');
         $sort++;
     }
 
-    echo _TADGAL_SORT_COMPLETED . " (" . date("Y-m-d H:i:s") . ")";
+    echo _TADGAL_SORT_COMPLETED . ' (' . date('Y-m-d H:i:s') . ')';
 }
 
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op         = system_CleanVars($_REQUEST, 'op', '', 'string');
-$sn         = system_CleanVars($_REQUEST, 'sn', 0, 'int');
-$csn        = system_CleanVars($_REQUEST, 'csn', 0, 'int');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+$op = system_CleanVars($_REQUEST, 'op', '', 'string');
+$sn = system_CleanVars($_REQUEST, 'sn', 0, 'int');
+$csn = system_CleanVars($_REQUEST, 'csn', 0, 'int');
 $item_photo = system_CleanVars($_POST, 'item_photo', '', 'array');
 $item_album = system_CleanVars($_POST, 'item_album', '', 'array');
 
 switch ($op) {
-    case "edit_photo":
+    case 'edit_photo':
         $main = edit_photo($sn);
         break;
-
-    case "edit_album":
+    case 'edit_album':
         $main = edit_album($csn);
         break;
-
-    case "update_tad_gallery":
+    case 'update_tad_gallery':
         update_tad_gallery($sn);
         break;
-
-    case "delete_tad_gallery":
+    case 'delete_tad_gallery':
         $csn = delete_tad_gallery($sn);
-        mk_rss_xml();
-        mk_rss_xml($csn);
         break;
-
-    case "update_tad_gallery_cate":
+    case 'update_tad_gallery_cate':
         update_tad_gallery_cate($csn);
         break;
-
-    case "delete_tad_gallery_cate";
+    case 'delete_tad_gallery_cate':
         delete_tad_gallery_cate($csn);
-        mk_rss_xml();
-        break;
+        header("location:{\Xmf\Request::getString('HTTP_REFERER', '', 'SERVER')}");
+        exit;
 
-    case "order":
+    case 'order':
         save_order($item_photo, $item_album);
         break;
-
     default:
         break;
 }
 
-echo tg_html5($main);
+echo Utility::html5($main);
